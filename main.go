@@ -46,7 +46,8 @@ func main() {
 
 	// fmt.Printf("Grayscale: %d x %d\n", gray.Bounds().Dx(), gray.Bounds().Dy())
 
-	art := ascii.Convert(gray, ascii.DefaultCharset)
+	// art := ascii.Convert(gray, ascii.DefaultCharset)
+	art := ascii.ConvertWithPatterns(gray)
 
 	if *output == "" {
 		fmt.Print(art)
