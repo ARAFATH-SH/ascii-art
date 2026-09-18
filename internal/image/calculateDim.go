@@ -10,8 +10,13 @@ func CalculateDimensions(img image.Image, targetWidth int) (int, int) {
 
 	aspectRatio := float64(originalHeight) / float64(originalWidth)
 
-	targetHeight := int(float64(targetWidth) * aspectRatio)
+	const characterAspectRatio = 0.5
 
+	targetHeight := int(float64(targetWidth) * aspectRatio * characterAspectRatio)
+
+	if targetHeight < 1 {
+		targetHeight = 1
+	}
 	return targetWidth, targetHeight
 
 }
