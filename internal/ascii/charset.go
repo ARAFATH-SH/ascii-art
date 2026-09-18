@@ -1,3 +1,5 @@
 package ascii
 
-const DefaultCharset = "@#S%?*+;:,. "
+const DefaultCharset = "@#8&WM$B%*o!;:,. "
+
+// @#S%?*+;:,.
