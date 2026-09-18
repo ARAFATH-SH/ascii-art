@@ -19,9 +19,9 @@ func main() {
 		return
 	}
 
-	bounds := img.Bounds()
+	fmt.Printf("Original: %d x %d\n", img.Bounds().Dx(), img.Bounds().Dy())
 
-	fmt.Println("Image Loaded successfully!\n")
-	fmt.Printf("Width: %d\n", bounds.Dx())
-	fmt.Printf("Height: %d\n", bounds.Dy())
+	resized := image.Resize(img, 100, 75)
+
+	fmt.Printf("Resized: %d x %d\n", resized.Bounds().Dx(), resized.Bounds().Dy())
 }
