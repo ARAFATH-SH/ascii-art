@@ -3,32 +3,30 @@ package main
 import (
 	"ascii-art/internal/ascii"
 	"ascii-art/internal/image"
+	"flag"
 	"fmt"
-	"os"
-	"strconv"
 )
 
 const defaultWidth = 100
 
 func main() {
+	width := flag.Int("width", defaultWidth, "output width")
+	flag.Parse()
 
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run. <image-path>")
+	if flag.NArg() < 1 {
+		fmt.Println("Usage: go run . [options] <image-path>")
+		flag.PrintDefaults()
 		return
 	}
 
-	width := defaultWidth
-
-	if len(os.Args) >= 3 {
-		parseWidth, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			fmt.Println("Error: width must be a positive integer")
-			return
-		}
-		width = parseWidth
+	if *width <= 0 {
+		fmt.Println("Error: width must be a positive integer")
+		return
 	}
 
-	img, err := image.Load(os.Args[1])
+	imagePath := flag.Arg(0)
+
+	img, err := image.Load(imagePath)
 	if err != nil {
 		fmt.Println("Error: ", err)
 		return
@@ -36,7 +34,7 @@ func main() {
 
 	// fmt.Printf("Original: %d x %d\n", img.Bounds().Dx(), img.Bounds().Dy())
 
-	targetWidth, targetHeight := image.CalculateDimensions(img, width)
+	targetWidth, targetHeight := image.CalculateDimensions(img, *width)
 
 	resized := image.Resize(img, targetWidth, targetHeight)
 
