@@ -5,12 +5,14 @@ import (
 	"ascii-art/internal/image"
 	"flag"
 	"fmt"
+	"os"
 )
 
 const defaultWidth = 100
 
 func main() {
 	width := flag.Int("width", defaultWidth, "output width")
+	output := flag.String("output", "", "output file path")
 	flag.Parse()
 
 	if flag.NArg() < 1 {
@@ -46,5 +48,15 @@ func main() {
 
 	art := ascii.Convert(gray, ascii.DefaultCharset)
 
-	fmt.Print(art)
+	if *output == "" {
+		fmt.Print(art)
+		return
+	}
+
+	if err := os.WriteFile(*output, []byte(art), 0644); err != nil {
+		fmt.Println("Error: ", err)
+		return
+	}
+
+	fmt.Printf("ASCII art saved to %s\n", *output)
 }
