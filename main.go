@@ -3,6 +3,7 @@ package main
 import (
 	"ascii-art/internal/ascii"
 	"ascii-art/internal/image"
+	"ascii-art/internal/output"
 	"flag"
 	"fmt"
 	"os"
@@ -12,11 +13,32 @@ const defaultWidth = 100
 
 func main() {
 	width := flag.Int("width", defaultWidth, "output width")
-	output := flag.String("output", "", "output file path")
+	outputPath := flag.String("output", "", "output file path")
+	input := flag.String("input", "", "ASCII text input file")
+
 	flag.Parse()
+
+	if *input != "" {
+		if *outputPath == "" {
+			fmt.Println("Error: --output is required when using --input")
+			return
+		}
+		data, err := os.ReadFile(*input)
+		if err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		if err := output.SaveASCIIAsImage(string(data), *outputPath); err != nil {
+			fmt.Println("Error:", err)
+			return
+		}
+		fmt.Printf("ASCII image saved to %s\n", *outputPath)
+		return
+	}
 
 	if flag.NArg() < 1 {
 		fmt.Println("Usage: go run . [options] <image-path>")
+		fmt.Println("  go run . --input <ascii-file> --output <image.png|image.jpg>\n")
 		flag.PrintDefaults()
 		return
 	}
@@ -34,30 +56,23 @@ func main() {
 		return
 	}
 
-	// fmt.Printf("Original: %d x %d\n", img.Bounds().Dx(), img.Bounds().Dy())
-
 	targetWidth, targetHeight := image.CalculateDimensions(img, *width)
 
 	resized := image.Resize(img, targetWidth, targetHeight)
 
-	// fmt.Printf("Resized: %d x %d\n", resized.Bounds().Dx(), resized.Bounds().Dy())
-
 	gray := image.GrayScale(resized)
 
-	// fmt.Printf("Grayscale: %d x %d\n", gray.Bounds().Dx(), gray.Bounds().Dy())
-
-	// art := ascii.Convert(gray, ascii.DefaultCharset)
 	art := ascii.ConvertWithPatterns(gray)
 
-	if *output == "" {
-		fmt.Print(art)
+	if *outputPath == "" {
+		output.PrintASCII(art)
 		return
 	}
 
-	if err := os.WriteFile(*output, []byte(art), 0644); err != nil {
+	if err := os.WriteFile(*outputPath, []byte(art), 0644); err != nil {
 		fmt.Println("Error: ", err)
 		return
 	}
 
-	fmt.Printf("ASCII art saved to %s\n", *output)
+	fmt.Printf("ASCII art saved to %s\n", *outputPath)
 }
