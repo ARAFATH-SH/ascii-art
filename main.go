@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ascii-art/internal/ascii"
 	"ascii-art/internal/image"
 	"fmt"
 	"os"
@@ -30,4 +31,8 @@ func main() {
 	gray := image.GrayScale(resized)
 
 	fmt.Printf("Grayscale: %d x %d\n", gray.Bounds().Dx(), gray.Bounds().Dy())
+
+	art := ascii.Convert(gray, ascii.DefaultCharset)
+
+	fmt.Print(art)
 }
